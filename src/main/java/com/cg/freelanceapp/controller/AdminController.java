@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cg.freelanceapp.dto.AdminDTO;
+import com.cg.freelanceapp.dto.*;
 import com.cg.freelanceapp.entities.Admin;
 import com.cg.freelanceapp.exceptions.InvalidAdminException;
 import com.cg.freelanceapp.exceptions.JobPortalValidationException;
@@ -48,7 +48,19 @@ public class AdminController {
 	 * @PostMapping: maps HTTP POST requests onto specific handler methods.
 	 * 
 	 */
-
+	 @PostMapping("/login")
+	    public ResponseEntity<LoginResponseDTO> loginAdmin(@RequestBody LoginDTO loginDto) {
+	        try {
+	            Admin admin = adminService.findByUserName(loginDto.getLoginId());
+	            if (admin != null && admin.getPassword().equals(loginDto.getPassword())) {
+	                return new ResponseEntity<>(new LoginResponseDTO(true, admin.getId()), HttpStatus.OK);
+	            } else {
+	                return new ResponseEntity<>(new LoginResponseDTO(false, null), HttpStatus.UNAUTHORIZED);
+	            }
+	        } catch (Exception e) {
+	            return new ResponseEntity<>(new LoginResponseDTO(false, null), HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	    }
 	@PostMapping("/save")
 	public ResponseEntity<Object> adminSave(@Valid @RequestBody AdminDTO adminDto, BindingResult bindingResult) {
 		System.out.println(adminDto.toString());

@@ -20,9 +20,8 @@ import com.cg.freelanceapp.service.IJobService;
 
 /**
  * 
- * @author   Akash Sunil Kumar
+ * @author   SadhuTejaSai
  * Description: This class is the controller for the job module 
- * Created Date: 18 April, 2021 
  * Version : v1.0.0
  */
 

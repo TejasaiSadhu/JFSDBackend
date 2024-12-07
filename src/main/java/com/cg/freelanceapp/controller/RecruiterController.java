@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cg.freelanceapp.dto.RecruiterDTO;
+import com.cg.freelanceapp.dto.*;
 import com.cg.freelanceapp.entities.Recruiter;
 import com.cg.freelanceapp.exceptions.InvalidRecruiterException;
 import com.cg.freelanceapp.exceptions.JobPortalValidationException;
@@ -32,7 +32,19 @@ public class RecruiterController {
 
 	@Autowired
 	IRecruiterService recruiterService;
-
+	 @PostMapping("/login")
+	    public ResponseEntity<LoginResponseDTO> loginRecruiter(@RequestBody LoginDTO loginDto) {
+	        try {
+	            Recruiter recruiter = recruiterService.findByUserName(loginDto.getLoginId());
+	            if (recruiter != null && recruiter.getPassword().equals(loginDto.getPassword())) {
+	                return new ResponseEntity<>(new LoginResponseDTO(true, recruiter.getId()), HttpStatus.OK);
+	            } else {
+	                return new ResponseEntity<>(new LoginResponseDTO(false, null), HttpStatus.UNAUTHORIZED);
+	            }
+	        } catch (Exception e) {
+	            return new ResponseEntity<>(new LoginResponseDTO(false, null), HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	    }
 	@PostMapping("/add")
 	public ResponseEntity<Object> createRecruiter(@Valid @RequestBody RecruiterDTO recruiterDto,
 			BindingResult bindingResult) {

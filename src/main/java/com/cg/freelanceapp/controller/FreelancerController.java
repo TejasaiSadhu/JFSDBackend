@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cg.freelanceapp.dto.FreelancerDTO;
+import com.cg.freelanceapp.dto.*;
 import com.cg.freelanceapp.entities.Freelancer;
 import com.cg.freelanceapp.exceptions.InvalidFreelancerException;
 import com.cg.freelanceapp.exceptions.JobPortalValidationException;
 import com.cg.freelanceapp.service.IFreelancerService;
+
 
 /**************************************************************************************
  * @author Aditya
@@ -45,6 +46,20 @@ public class FreelancerController {
 	 * @postmapping: Post mapping requests a body from the user
 	 * 				 which is then persisted onto the database.
 	 ****************************************************************************************/
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> loginFreelancer(@RequestBody LoginDTO loginDto) {
+        try {
+            Freelancer freelancer = freelancerService.findByUserName(loginDto.getLoginId());
+            if (freelancer != null && freelancer.getPassword().equals(loginDto.getPassword())) {
+                return new ResponseEntity<>(new LoginResponseDTO(true, freelancer.getId()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new LoginResponseDTO(false, null), HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new LoginResponseDTO(false, null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 	@PostMapping("/add")
 	public ResponseEntity<Object> createFreelancer(@Valid @RequestBody FreelancerDTO freelancerDto,
 			BindingResult bindingResult) {
